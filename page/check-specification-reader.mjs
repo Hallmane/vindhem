@@ -4,12 +4,12 @@ import { readFileSync, mkdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { parse } from 'yaml';
-import { JSDOM } from 'jsdom';
 import { chromium } from '@playwright/test';
 import { createPreviewServer } from './serve-specification.mjs';
+import { verifyReaderAssets } from './verify-site.mjs';
 
 const output = resolve('dist/specification');
-const document = new JSDOM(readFileSync(resolve(output, 'index.html'), 'utf8')).window.document;
+const document = verifyReaderAssets(output);
 const api = parse(readFileSync('openapi/vindhem.yaml', 'utf8'));
 assert.deepEqual(JSON.parse(readFileSync(resolve(output, 'openapi/vindhem.json'), 'utf8')), api);
 const publication = JSON.parse(readFileSync(resolve(output, 'publication.json'), 'utf8'));
@@ -32,7 +32,15 @@ assert.equal(new Set(ids).size, ids.length, 'Duplicate anchors');
 for (const anchor of document.querySelectorAll('a[href]')) {
     const href = anchor.getAttribute('href');
     if (href.startsWith('#')) assert(ids.includes(href.slice(1)), `Missing anchor: ${href}`);
-    else if (!/^(https?:|mailto:)/.test(href)) assert(existsSync(resolve(output, href.split('#')[0])), `Missing download: ${href}`);
+    else if (!/^(https?:|mailto:)/.test(href)) {
+        const name = href.split(/[?#]/)[0];
+        assert(existsSync(resolve(output, name)), `Missing download: ${href}`);
+        if (href.includes('?')) {
+            assert(['reader.css', 'reader.js'].includes(name), `Unexpected download query: ${href}`);
+            const hash = createHash('sha256').update(readFileSync(resolve(output, name))).digest('hex');
+            assert.equal(href, `${name}?v=${hash}`, `Expected exact content-addressed download: ${href}`);
+        }
+    }
 }
 assert.match(document.querySelector('#op-searchLibrary pre').textContent, /--data-urlencode "q=\$Q"/);
 assert.match(document.querySelector('#op-streamLibraryChanges pre').textContent, /afterRevision=\$AFTER_REVISION/);

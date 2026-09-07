@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { lstatSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { JSDOM } from 'jsdom';
 
 export const SITE_FILES = [
     'index.html', 'reader.css', 'reader.js', 'publication.json',
@@ -11,6 +12,20 @@ export const SITE_FILES = [
     'schema/library-v1.schema.json',
     'spec/README.md', 'spec/vindhem.md', 'spec/library-format.md',
 ];
+
+export function verifyReaderAssets(directory) {
+    const document = new JSDOM(readFileSync(resolve(directory, 'index.html'), 'utf8')).window.document;
+    for (const [name, selector, attribute] of [
+        ['reader.css', 'link[rel="stylesheet"]', 'href'],
+        ['reader.js', 'script', 'src'],
+    ]) {
+        const elements = document.querySelectorAll(selector);
+        assert.equal(elements.length, 1, `Expected one local ${name} reference`);
+        const hash = createHash('sha256').update(readFileSync(resolve(directory, name))).digest('hex');
+        assert.equal(elements[0].getAttribute(attribute), `${name}?v=${hash}`, `Expected exact content-addressed ${name} URL`);
+    }
+    return document;
+}
 
 export function verifySite(directory) {
     const root = resolve(directory);
@@ -55,6 +70,7 @@ export function verifySite(directory) {
         assert.equal(bytes.length, file.bytes, `Size mismatch: ${file.path}`);
         assert.equal(createHash('sha256').update(bytes).digest('hex'), file.sha256, `Checksum mismatch: ${file.path}`);
     }
+    verifyReaderAssets(root);
     const api = JSON.parse(readFileSync(resolve(root, record.openapi.json), 'utf8'));
     assert.deepEqual(api.info.license, { name: 'Apache 2.0', identifier: 'Apache-2.0' });
     assert.match(readFileSync(resolve(root, record.license), 'utf8'), /Apache License\s+Version 2\.0, January 2004/);

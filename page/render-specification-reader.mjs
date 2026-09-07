@@ -1,4 +1,5 @@
-import { readFileSync, writeFileSync, copyFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, posix } from 'node:path';
 import { Marked } from 'marked';
 
@@ -8,6 +9,10 @@ const methods = new Set(['get', 'post', 'put', 'patch', 'delete', 'head', 'optio
 const json = (value) => escape(JSON.stringify(value, null, 2));
 
 export function renderSpecificationReader({ root, output, contract, portable, revision }) {
+    const assets = ['reader.css', 'reader.js'].map((name) => {
+        const bytes = readFileSync(resolve(root, 'page', name));
+        return { name, bytes, url: `${name}?v=${createHash('sha256').update(bytes).digest('hex')}` };
+    });
     const headings = [];
     function markdown(text, prefix = '', source = 'openapi/vindhem.yaml') {
         const usedIds = new Map();
@@ -222,7 +227,7 @@ export function renderSpecificationReader({ root, output, contract, portable, re
     const portableMarkup = [['schema', portable], ...Object.entries(portable.$defs ?? {})].map(([name, schema]) => `<article class="schema" id="portable-${escape(name)}"><h3>${name === 'schema' ? 'Portable Library schema' : escape(name)}</h3>${schemaBody(schema, true)}${rawSchema(schema)}</article>`).join('');
 
     const html = `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="The Vindhem music-library specification: complete API reference, schemas, system rules and portable library format."><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; connect-src 'none'"><title>Vindhem Specification</title><link rel="stylesheet" href="reader.css"><script src="reader.js" defer></script></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="The Vindhem music-library specification: complete API reference, schemas, system rules and portable library format."><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; connect-src 'none'"><title>Vindhem Specification</title><link rel="stylesheet" href="${assets[0].url}"><script src="${assets[1].url}" defer></script></head>
 <body><a class="skip-link" href="#rules">Skip to specification</a><div class="book">
 <header class="masthead" id="top"><div class="running-head"><a class="repository-link" href="https://github.com/Hallmane/vindhem">GitHub repository ↗</a><span>Specification / ${escape(contract.info.version)}${contract.info.version.startsWith('0.') ? ' · Development release' : ''}</span></div><div class="title-spread"><h1>Vindhem</h1><div class="edition">OpenAPI ${escape(contract.openapi)} · JSON Schema</div></div>
 <div class="download-line"><a href="openapi/vindhem.yaml" download>OpenAPI YAML ↓</a><a href="openapi/vindhem.json" download>JSON ↓</a><a href="schema/library-v1.schema.json" download>Portable schema ↓</a></div></header>
@@ -233,6 +238,6 @@ export function renderSpecificationReader({ root, output, contract, portable, re
 <section class="chapter" id="portable" data-section><div class="chapter-label">IV / Portable Library</div><h2>Portable Library</h2><div class="prose">${portableRules}</div>${portableMarkup}</section>
 <footer class="colophon"><p>Vindhem Specification ${escape(contract.info.version)}</p><p>${revision ? `Specification revision <code>${escape(revision.slice(0, 12))}</code>. ` : ''}<a href="publication.json">Publication record</a> · <a href="release-notes.md">Release notes</a> · <a href="spec/vindhem.md">Written rules</a> · <a href="spec/library-format.md">Portable format</a> · <a href="LICENSE">Licence</a></p></footer></main></div></div></body></html>`;
     writeFileSync(resolve(output, 'index.html'), html.replace(/^[\t ]+$/gm, ''));
-    for (const name of ['reader.css', 'reader.js']) copyFileSync(resolve(root, 'page', name), resolve(output, name));
+    for (const { name, bytes } of assets) writeFileSync(resolve(output, name), bytes);
     return { files: ['index.html', 'reader.css', 'reader.js'], operationCount, schemaCount: schemas.length };
 }
