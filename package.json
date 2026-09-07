@@ -1,0 +1,24 @@
+{
+  "name": "vindhem-specification",
+  "version": "0.1.2",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "check": "node scripts/validate-openapi.mjs && node scripts/check-documents.mjs",
+    "page:build": "node page/build-specification-publication.mjs",
+    "page:preview": "node page/serve-specification.mjs",
+    "page:check": "npm run page:build && node page/check-specification-reader.mjs",
+    "page:bundle": "npm run page:build && node page/prepare-site.mjs",
+    "page:verify": "node page/verify-site.mjs"
+  },
+  "devDependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "marked": "18.0.11",
+    "@playwright/test": "1.62.1",
+    "jsdom": "26.1.0",
+    "yaml": "2.9.0"
+  }
+}

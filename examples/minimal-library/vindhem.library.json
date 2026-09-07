@@ -1,0 +1,18 @@
+{
+  "format": "vindhem.music-library",
+  "version": 1,
+  "id": "f6ef8998-b1fd-4b86-99f2-133f87a72c5d",
+  "tracks": [
+    {
+      "id": "track-1",
+      "title": "Untitled recording",
+      "artists": [],
+      "identifiers": [],
+      "files": []
+    }
+  ],
+  "artists": [],
+  "albums": [],
+  "collections": []
+}
+
