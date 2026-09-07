@@ -89,7 +89,21 @@ try {
     await page.goto(`${base}/#schema-Track`);
     assert(await page.locator('#schema-Track').isVisible());
     await currentSection('#types');
-    await page.locator('.contents a[href="#types"]').evaluate((e) => { e.closest('details').open = true; });
+    const definitionsToggle = page.locator('.contents summary').filter({ has: page.locator('a[href="#types"]') });
+    const portableToggle = page.locator('.contents summary').filter({ has: page.locator('a[href="#portable"]') });
+    const assertDisclosure = async (toggle) => {
+        const before = await toggle.evaluate((e) => ({ open: e.parentElement.open, hash: location.hash }));
+        assert.equal(await toggle.evaluate((e) => getComputedStyle(e).listStyleType), before.open ? 'disclosure-open' : 'disclosure-closed');
+        await toggle.click({ position: { x: 4, y: 8 } });
+        assert.equal(await toggle.evaluate((e) => e.parentElement.open), !before.open, 'Arrow toggles the list');
+        assert.equal(await page.evaluate(() => location.hash), before.hash, 'Disclosure does not navigate');
+        await toggle.focus();
+        await toggle.press('Space');
+        assert.equal(await toggle.evaluate((e) => e.parentElement.open), before.open, 'Keyboard toggles the list');
+    };
+    await assertDisclosure(definitionsToggle);
+    await assertDisclosure(portableToggle);
+    await definitionsToggle.click({ position: { x: 4, y: 8 } });
     await currentSection('#schema-Track');
     assert(await page.locator('.contents a[href="#schema-Track"]').evaluate((e) => {
         const bounds = e.closest('nav').getBoundingClientRect();
@@ -99,7 +113,14 @@ try {
     await page.screenshot({ path: resolve(screenshots, 'schema.png') });
     await page.setViewportSize({ width: 360, height: 1000 });
     await page.locator('#schema-Track').evaluate((e) => e.scrollIntoView());
-    await currentSection('#types');
+    await currentSection('#schema-Track');
+    await assertDisclosure(definitionsToggle);
+    await assertDisclosure(portableToggle);
+    await portableToggle.click({ position: { x: 4, y: 8 } });
+    assert(await page.locator('.contents a[href="#format-1-purpose"]').isVisible(), 'Expanded links remain available on narrow screens');
+    await page.locator('.contents a[href="#portable"]').click();
+    assert.equal(await page.evaluate(() => location.hash), '#portable', 'Chapter title still navigates');
+    assert(await portableToggle.evaluate((e) => e.parentElement.open), 'Chapter navigation does not collapse the list');
     for (const width of [1024, 736, 360]) {
         await page.setViewportSize({ width, height: 1000 });
         for (const hash of ['', '#op-getTrack', '#schema-Track', '#portable']) {
