@@ -22,6 +22,7 @@ for (const file of publication.files) {
     }
 }
 assert.equal(document.querySelectorAll('a[href="LICENSE"]').length, 1, 'Keep one licence link');
+assert.equal(document.querySelectorAll('.masthead .repository-link[href="https://github.com/Hallmane/vindhem"]').length, 1, 'Keep one top repository link');
 assert.equal(publication.license, 'LICENSE');
 const operations = Object.values(api.paths).flatMap((item) => Object.values(item).filter((value) => value?.operationId).map((op) => op.operationId));
 assert.deepEqual([...document.querySelectorAll('[data-operation]')].map((e) => e.dataset.operation).sort(), operations.sort());
