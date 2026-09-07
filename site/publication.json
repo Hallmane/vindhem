@@ -7,7 +7,7 @@
   "portableLibraryVersion": 1,
   "specificationTag": "v0.1.2",
   "specificationRevision": "13e8be4e235338d0a5c34a030d56cf39cab9aca1",
-  "readerRevision": "710d106b31eef40d7a754077639a0050bf884333",
+  "readerRevision": "98316a04ea28bfd55c53e321619d0e6576c8ae1a",
   "workingTreeDirty": false,
   "overview": "index.html",
   "openapi": {
@@ -66,8 +66,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 1299899,
-      "sha256": "ed17c760516ada6eb59507f11db3f681a8f125947601727bb2bc2866c3846c3f"
+      "bytes": 1300033,
+      "sha256": "e3db78ec95afe08434873cb7c686327de176757ebaa91a22a5ff17e4e4246abc"
     },
     {
       "path": "reader.css",
