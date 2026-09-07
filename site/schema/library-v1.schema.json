@@ -1,0 +1,441 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vindhem Portable Music Library v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "version",
+    "id",
+    "tracks",
+    "artists",
+    "albums",
+    "collections"
+  ],
+  "properties": {
+    "format": {
+      "const": "vindhem.music-library"
+    },
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/libraryId"
+    },
+    "title": {
+      "$ref": "#/$defs/nonEmptyString"
+    },
+    "tracks": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/track"
+      }
+    },
+    "artists": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/artist"
+      }
+    },
+    "albums": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/album"
+      }
+    },
+    "collections": {
+      "type": "array",
+      "maxItems": 50000,
+      "items": {
+        "$ref": "#/$defs/collection"
+      },
+      "contains": {
+        "type": "object",
+        "required": [
+          "role"
+        ],
+        "properties": {
+          "role": {
+            "const": "liked"
+          }
+        }
+      },
+      "minContains": 0,
+      "maxContains": 1
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "collectionName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "collectionDescription": {
+      "type": "string",
+      "maxLength": 16384
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "libraryId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "safeNonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "safePositiveInteger": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "packagePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\\\)(?!.*//)(?!.*(?:^|/)\\.\\.?(?:/|$))(?!.*[<>:\"|?*])(?!.*[\\u0000-\\u001F\\u007F-\\u009F]).*[^/]$"
+    },
+    "partialDate": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9]{4}$"
+        },
+        {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[01])$"
+        }
+      ]
+    },
+    "identifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scheme",
+        "value"
+      ],
+      "properties": {
+        "scheme": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9.-]*$"
+        },
+        "value": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "artistCredit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "artistId": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "fileAttachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/packagePath"
+        },
+        "mediaType": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "sizeBytes": {
+          "$ref": "#/$defs/safeNonNegativeInteger"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "imageAttachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/packagePath"
+        },
+        "mediaType": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "sizeBytes": {
+          "$ref": "#/$defs/safeNonNegativeInteger"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "width": {
+          "$ref": "#/$defs/safePositiveInteger"
+        },
+        "height": {
+          "$ref": "#/$defs/safePositiveInteger"
+        },
+        "role": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "track": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "artists",
+        "identifiers",
+        "files"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "artistText": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "artists": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/artistCredit"
+          }
+        },
+        "albumId": {
+          "$ref": "#/$defs/id"
+        },
+        "albumTitle": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "discNumber": {
+          "$ref": "#/$defs/safePositiveInteger"
+        },
+        "trackNumber": {
+          "$ref": "#/$defs/safePositiveInteger"
+        },
+        "durationMs": {
+          "$ref": "#/$defs/safeNonNegativeInteger"
+        },
+        "identifiers": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "files": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/fileAttachment"
+          }
+        },
+        "artwork": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/imageAttachment"
+          }
+        }
+      },
+      "not": {
+        "required": [
+          "albumId",
+          "albumTitle"
+        ]
+      }
+    },
+    "artist": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "identifiers"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "sortName": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "identifiers": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "artwork": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/imageAttachment"
+          }
+        }
+      }
+    },
+    "album": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "artists",
+        "identifiers"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "artistText": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "artists": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/artistCredit"
+          }
+        },
+        "releaseDate": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "identifiers": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "artwork": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/imageAttachment"
+          }
+        }
+      }
+    },
+    "collectionEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "trackId"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "trackId": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "collection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "name",
+        "entries"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "playlist",
+            "folder"
+          ]
+        },
+        "role": {
+          "const": "liked"
+        },
+        "name": {
+          "$ref": "#/$defs/collectionName"
+        },
+        "description": {
+          "$ref": "#/$defs/collectionDescription"
+        },
+        "parentId": {
+          "$ref": "#/$defs/id"
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 500000,
+          "items": {
+            "$ref": "#/$defs/collectionEntry"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "folder"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "entries": {
+                "maxItems": 0
+              }
+            },
+            "not": {
+              "required": [
+                "role"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

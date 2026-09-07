@@ -1,0 +1,83 @@
+{
+  "format": "vindhem.specification-site",
+  "formatVersion": 1,
+  "title": "Vindhem Specification",
+  "apiVersion": "0.1.2",
+  "openApiVersion": "3.1.0",
+  "portableLibraryVersion": 1,
+  "specificationTag": "v0.1.2",
+  "specificationRevision": "13e8be4e235338d0a5c34a030d56cf39cab9aca1",
+  "readerRevision": "5908f6d6232d99b7c3550168f287c1491be692ab",
+  "workingTreeDirty": false,
+  "overview": "index.html",
+  "openapi": {
+    "yaml": "openapi/vindhem.yaml",
+    "json": "openapi/vindhem.json"
+  },
+  "portableSchema": "schema/library-v1.schema.json",
+  "operationIndex": "operations.json",
+  "releaseNotes": "release-notes.md",
+  "license": "LICENSE",
+  "files": [
+    {
+      "path": "openapi/vindhem.yaml",
+      "bytes": 245535,
+      "sha256": "c20d9f205f53046c6c5e4912f4a88e764b3bfbe6f3f2b65deb09c100d25bf858"
+    },
+    {
+      "path": "schema/library-v1.schema.json",
+      "bytes": 9389,
+      "sha256": "a60fc1903414bf130cc6641e044d0072b201f3d9b92f4ae362084a5b81511081"
+    },
+    {
+      "path": "spec/README.md",
+      "bytes": 5195,
+      "sha256": "d412fa5d194a0197a20e428521d6dc04f02882046a186476adeaed7b6d56f723"
+    },
+    {
+      "path": "spec/vindhem.md",
+      "bytes": 34519,
+      "sha256": "59b8a7f722e696f4aa8f3359497e2157e145a24c917251377a977cb482942764"
+    },
+    {
+      "path": "spec/library-format.md",
+      "bytes": 19813,
+      "sha256": "c01615dcb593bcac1fbb199156aa6f4a80777b9c40a5e710d78ceddbde2d9579"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 11381,
+      "sha256": "21ad0fe39a403989a33e5f4a4aa1edb038944c5199b3ec8b0ee97958f89b09b2"
+    },
+    {
+      "path": "openapi/vindhem.json",
+      "bytes": 336140,
+      "sha256": "d366f85607f20fb58b35ebfe8ee71b65032f49154d9ef6e687eaa78b9d01316f"
+    },
+    {
+      "path": "operations.json",
+      "bytes": 19274,
+      "sha256": "2a3fbfd094c74076ed49cc957fb747c200a0779646c23a5cfe233e60b774a480"
+    },
+    {
+      "path": "release-notes.md",
+      "bytes": 882,
+      "sha256": "f8fc9a8e6f41ed94c43d4b480c63955727a9edbe893f9f633149687f6975c822"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1299804,
+      "sha256": "ed4edca10046aa45b79b0d336f235adb29a497af4ecb148f1d0c1d060848fd9c"
+    },
+    {
+      "path": "reader.css",
+      "bytes": 11002,
+      "sha256": "31132f7e652d0bb8e588a9cb7c4098d4681e08048fc38653970f5aa09a83d729"
+    },
+    {
+      "path": "reader.js",
+      "bytes": 2988,
+      "sha256": "dda40f6b64d91fc62ba2969e9522d45f991880a369418753920f480a69ff3528"
+    }
+  ]
+}

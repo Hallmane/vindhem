@@ -1,0 +1,551 @@
+{
+  "operationCount": 79,
+  "groups": [
+    {
+      "name": "Service",
+      "description": "Contract discovery and process health.",
+      "operations": [
+        {
+          "operationId": "getServiceAtRoot",
+          "method": "GET",
+          "path": "/",
+          "summary": "Read service identity"
+        },
+        {
+          "operationId": "getReadiness",
+          "method": "GET",
+          "path": "/readyz",
+          "summary": "Read process readiness"
+        },
+        {
+          "operationId": "getOpenApiDocument",
+          "method": "GET",
+          "path": "/openapi.yaml",
+          "summary": "Read this contract"
+        },
+        {
+          "operationId": "getPortableLibrarySchema",
+          "method": "GET",
+          "path": "/schema/library-v1.schema.json",
+          "summary": "Read the Portable Music Library v1 schema"
+        },
+        {
+          "operationId": "getService",
+          "method": "GET",
+          "path": "/api/v2/service",
+          "summary": "Read service identity and limits"
+        }
+      ]
+    },
+    {
+      "name": "Libraries",
+      "description": "Library identity, snapshots, lookup, search, and export.",
+      "operations": [
+        {
+          "operationId": "listLibraries",
+          "method": "GET",
+          "path": "/api/v2/libraries",
+          "summary": "List libraries hosted by this server"
+        },
+        {
+          "operationId": "createLibrary",
+          "method": "POST",
+          "path": "/api/v2/libraries",
+          "summary": "Create an empty library"
+        },
+        {
+          "operationId": "getLibrary",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}",
+          "summary": "Read one library and its current revision"
+        },
+        {
+          "operationId": "updateLibrary",
+          "method": "PATCH",
+          "path": "/api/v2/libraries/{libraryId}",
+          "summary": "Update library metadata"
+        },
+        {
+          "operationId": "deleteLibrary",
+          "method": "DELETE",
+          "path": "/api/v2/libraries/{libraryId}",
+          "summary": "Delete a library and its managed media"
+        },
+        {
+          "operationId": "getLibrarySnapshot",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/snapshot",
+          "summary": "Read one coherent complete library snapshot"
+        },
+        {
+          "operationId": "exportPortableLibraryManifest",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/export/vindhem.library.json",
+          "summary": "Export a metadata-only Portable Music Library manifest"
+        },
+        {
+          "operationId": "exportPortableLibraryPackage",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/export/vindhem-library.zip",
+          "summary": "Export a coherent Portable Music Library package"
+        },
+        {
+          "operationId": "searchLibrary",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/search",
+          "summary": "Search display metadata inside one library"
+        },
+        {
+          "operationId": "lookupLibraryObjects",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/lookup",
+          "summary": "Resolve ordered local references to complete objects"
+        }
+      ]
+    },
+    {
+      "name": "Tracks",
+      "description": "Library-local tracks and the canonical all-songs order.",
+      "operations": [
+        {
+          "operationId": "listTracks",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/tracks",
+          "summary": "Query tracks in canonical all-songs order"
+        },
+        {
+          "operationId": "createTrack",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/tracks",
+          "summary": "Create a metadata-only track"
+        },
+        {
+          "operationId": "replaceTrackOrder",
+          "method": "PUT",
+          "path": "/api/v2/libraries/{libraryId}/tracks/order",
+          "summary": "Replace the canonical all-songs order"
+        },
+        {
+          "operationId": "getTrack",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/tracks/{trackId}",
+          "summary": "Read one complete track"
+        },
+        {
+          "operationId": "updateTrack",
+          "method": "PATCH",
+          "path": "/api/v2/libraries/{libraryId}/tracks/{trackId}",
+          "summary": "Update track metadata without changing its identity or media"
+        },
+        {
+          "operationId": "deleteTrack",
+          "method": "DELETE",
+          "path": "/api/v2/libraries/{libraryId}/tracks/{trackId}",
+          "summary": "Delete a track"
+        }
+      ]
+    },
+    {
+      "name": "Artists",
+      "description": "Explicit artist records used by track and album credits.",
+      "operations": [
+        {
+          "operationId": "listArtists",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/artists",
+          "summary": "Query artists in canonical artist order"
+        },
+        {
+          "operationId": "createArtist",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/artists",
+          "summary": "Create an artist"
+        },
+        {
+          "operationId": "getArtist",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/artists/{artistId}",
+          "summary": "Read one complete artist"
+        },
+        {
+          "operationId": "updateArtist",
+          "method": "PATCH",
+          "path": "/api/v2/libraries/{libraryId}/artists/{artistId}",
+          "summary": "Update artist metadata"
+        },
+        {
+          "operationId": "deleteArtist",
+          "method": "DELETE",
+          "path": "/api/v2/libraries/{libraryId}/artists/{artistId}",
+          "summary": "Delete an unreferenced artist"
+        }
+      ]
+    },
+    {
+      "name": "Albums",
+      "description": "Explicit library-local release records.",
+      "operations": [
+        {
+          "operationId": "listAlbums",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/albums",
+          "summary": "Query albums in canonical album order"
+        },
+        {
+          "operationId": "createAlbum",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/albums",
+          "summary": "Create an album"
+        },
+        {
+          "operationId": "getAlbum",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/albums/{albumId}",
+          "summary": "Read one complete album"
+        },
+        {
+          "operationId": "updateAlbum",
+          "method": "PATCH",
+          "path": "/api/v2/libraries/{libraryId}/albums/{albumId}",
+          "summary": "Update album metadata"
+        },
+        {
+          "operationId": "deleteAlbum",
+          "method": "DELETE",
+          "path": "/api/v2/libraries/{libraryId}/albums/{albumId}",
+          "summary": "Delete an unreferenced album"
+        }
+      ]
+    },
+    {
+      "name": "Collections",
+      "description": "Ordered playlists, folders, and independently identified entries.",
+      "operations": [
+        {
+          "operationId": "listCollections",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/collections",
+          "summary": "Query collection summaries in canonical sibling order"
+        },
+        {
+          "operationId": "createCollection",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/collections",
+          "summary": "Create an empty playlist or folder"
+        },
+        {
+          "operationId": "replaceCollectionSiblingOrder",
+          "method": "PUT",
+          "path": "/api/v2/libraries/{libraryId}/collections/order",
+          "summary": "Replace the order of top-level collections or one collection's children"
+        },
+        {
+          "operationId": "getCollection",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/collections/{collectionId}",
+          "summary": "Read one collection summary"
+        },
+        {
+          "operationId": "updateCollection",
+          "method": "PATCH",
+          "path": "/api/v2/libraries/{libraryId}/collections/{collectionId}",
+          "summary": "Rename, describe, move, or change the role of a collection"
+        },
+        {
+          "operationId": "deleteCollection",
+          "method": "DELETE",
+          "path": "/api/v2/libraries/{libraryId}/collections/{collectionId}",
+          "summary": "Delete a playlist or an empty folder"
+        },
+        {
+          "operationId": "listCollectionEntries",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/collections/{collectionId}/entries",
+          "summary": "List a playlist's entries in canonical order"
+        },
+        {
+          "operationId": "appendCollectionEntries",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/collections/{collectionId}/entries",
+          "summary": "Append track occurrences to a playlist"
+        },
+        {
+          "operationId": "replaceCollectionEntryOrder",
+          "method": "PUT",
+          "path": "/api/v2/libraries/{libraryId}/collections/{collectionId}/entries/order",
+          "summary": "Replace a playlist's complete entry order"
+        },
+        {
+          "operationId": "moveCollectionEntries",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/collection-entry-moves",
+          "summary": "Move ordered entries within or between playlists"
+        },
+        {
+          "operationId": "getCollectionEntry",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/collection-entries/{entryId}",
+          "summary": "Read one collection entry by its library-wide entry ID"
+        },
+        {
+          "operationId": "updateCollectionEntry",
+          "method": "PATCH",
+          "path": "/api/v2/libraries/{libraryId}/collection-entries/{entryId}",
+          "summary": "Retarget one playlist occurrence while preserving its entry ID"
+        },
+        {
+          "operationId": "deleteCollectionEntry",
+          "method": "DELETE",
+          "path": "/api/v2/libraries/{libraryId}/collection-entries/{entryId}",
+          "summary": "Remove one exact playlist occurrence"
+        }
+      ]
+    },
+    {
+      "name": "Imports",
+      "description": "Durable staging and explicit commit of media or Portable Libraries.",
+      "operations": [
+        {
+          "operationId": "listImportBatches",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/imports",
+          "summary": "List durable import batches for a library"
+        },
+        {
+          "operationId": "createImportBatch",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/imports",
+          "summary": "Create durable staging for audio files or a Portable Library"
+        },
+        {
+          "operationId": "getImportBatch",
+          "method": "GET",
+          "path": "/api/v2/imports/{batchId}",
+          "summary": "Inspect one import batch and aggregate progress"
+        },
+        {
+          "operationId": "putImportManifest",
+          "method": "PUT",
+          "path": "/api/v2/imports/{batchId}/manifest",
+          "summary": "Stage the manifest for a Portable Library import"
+        },
+        {
+          "operationId": "getImportManifest",
+          "method": "GET",
+          "path": "/api/v2/imports/{batchId}/manifest",
+          "summary": "Inspect the stored staged Portable Library manifest"
+        },
+        {
+          "operationId": "listImportItems",
+          "method": "GET",
+          "path": "/api/v2/imports/{batchId}/items",
+          "summary": "List staged items and their proposals or failures"
+        },
+        {
+          "operationId": "uploadImportItem",
+          "method": "POST",
+          "path": "/api/v2/imports/{batchId}/items",
+          "summary": "Upload one staged file"
+        },
+        {
+          "operationId": "getImportItem",
+          "method": "GET",
+          "path": "/api/v2/imports/{batchId}/items/{itemId}",
+          "summary": "Inspect one staged item"
+        },
+        {
+          "operationId": "discardImportItem",
+          "method": "DELETE",
+          "path": "/api/v2/imports/{batchId}/items/{itemId}",
+          "summary": "Discard an uncommitted item and its staged bytes"
+        },
+        {
+          "operationId": "replaceImportProposal",
+          "method": "PUT",
+          "path": "/api/v2/imports/{batchId}/items/{itemId}/proposal",
+          "summary": "Replace the proposed semantic result of one ready item"
+        },
+        {
+          "operationId": "commitImportBatch",
+          "method": "POST",
+          "path": "/api/v2/imports/{batchId}/commit",
+          "summary": "Commit selected staged work atomically"
+        },
+        {
+          "operationId": "cancelImportBatch",
+          "method": "POST",
+          "path": "/api/v2/imports/{batchId}/cancel",
+          "summary": "Cancel uncommitted work and remove staged bytes"
+        }
+      ]
+    },
+    {
+      "name": "Companions",
+      "description": "Immutable typed data that references music without changing its schema.",
+      "operations": [
+        {
+          "operationId": "listCompanionTypes",
+          "method": "GET",
+          "path": "/api/v2/companion-types",
+          "summary": "List registered companion data types"
+        },
+        {
+          "operationId": "getCompanionType",
+          "method": "GET",
+          "path": "/api/v2/companion-types/{typeId}/{typeVersion}",
+          "summary": "Read one companion type descriptor"
+        },
+        {
+          "operationId": "registerCompanionType",
+          "method": "PUT",
+          "path": "/api/v2/companion-types/{typeId}/{typeVersion}",
+          "summary": "Register one immutable companion data shape"
+        },
+        {
+          "operationId": "listCompanionObjects",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/companions",
+          "summary": "Query immutable companion objects"
+        },
+        {
+          "operationId": "createCompanionObject",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/companions",
+          "summary": "Create an immutable typed object that references music"
+        },
+        {
+          "operationId": "getCompanionObject",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/companions/{companionId}",
+          "summary": "Read one immutable companion object"
+        },
+        {
+          "operationId": "deleteCompanionObject",
+          "method": "DELETE",
+          "path": "/api/v2/libraries/{libraryId}/companions/{companionId}",
+          "summary": "Delete one companion object"
+        }
+      ]
+    },
+    {
+      "name": "Media",
+      "description": "Managed bytes addressed without exposing private storage paths.",
+      "operations": [
+        {
+          "operationId": "resolveTrackMedia",
+          "method": "POST",
+          "path": "/api/v2/media/resolve",
+          "summary": "Resolve a stable track reference to readable media"
+        },
+        {
+          "operationId": "getAttachment",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/attachments/{attachmentId}",
+          "summary": "Read managed audio or artwork bytes"
+        },
+        {
+          "operationId": "headAttachment",
+          "method": "HEAD",
+          "path": "/api/v2/libraries/{libraryId}/attachments/{attachmentId}",
+          "summary": "Read attachment metadata without bytes"
+        },
+        {
+          "operationId": "deleteAttachment",
+          "method": "DELETE",
+          "path": "/api/v2/libraries/{libraryId}/attachments/{attachmentId}",
+          "summary": "Detach managed media from its owner"
+        },
+        {
+          "operationId": "replaceAttachmentOrder",
+          "method": "PUT",
+          "path": "/api/v2/libraries/{libraryId}/attachment-order",
+          "summary": "Replace one object's audio or artwork preference order"
+        },
+        {
+          "operationId": "moveAttachment",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/attachment-moves",
+          "summary": "Move an existing attachment to another compatible owner"
+        }
+      ]
+    },
+    {
+      "name": "Changes",
+      "description": "Revisioned committed effects and live change hints.",
+      "operations": [
+        {
+          "operationId": "listLibraryChanges",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/changes",
+          "summary": "List committed changes after a known revision"
+        },
+        {
+          "operationId": "streamLibraryChanges",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/events",
+          "summary": "Watch committed library changes with Server-Sent Events"
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "description": "Several typed metadata edits committed atomically as one revision.",
+      "operations": [
+        {
+          "operationId": "commitLibraryTransaction",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/transactions",
+          "summary": "Commit several typed metadata operations atomically"
+        }
+      ]
+    },
+    {
+      "name": "Edit Batches",
+      "description": "Durable prepare, inspect, revise, and commit for larger typed edits.",
+      "operations": [
+        {
+          "operationId": "listEditBatches",
+          "method": "GET",
+          "path": "/api/v2/libraries/{libraryId}/edit-batches",
+          "summary": "List durable edit batches for one library"
+        },
+        {
+          "operationId": "createEditBatch",
+          "method": "POST",
+          "path": "/api/v2/libraries/{libraryId}/edit-batches",
+          "summary": "Prepare and validate a durable set of typed edits"
+        },
+        {
+          "operationId": "getEditBatch",
+          "method": "GET",
+          "path": "/api/v2/edit-batches/{editBatchId}",
+          "summary": "Inspect operations, validation, and predicted effects"
+        },
+        {
+          "operationId": "replaceEditBatchOperations",
+          "method": "PUT",
+          "path": "/api/v2/edit-batches/{editBatchId}",
+          "summary": "Replace and revalidate an uncommitted batch's operations"
+        },
+        {
+          "operationId": "rebaseEditBatch",
+          "method": "POST",
+          "path": "/api/v2/edit-batches/{editBatchId}/rebase",
+          "summary": "Revalidate an uncommitted batch against a later library revision"
+        },
+        {
+          "operationId": "commitEditBatch",
+          "method": "POST",
+          "path": "/api/v2/edit-batches/{editBatchId}/commit",
+          "summary": "Commit a ready edit batch as one library revision"
+        },
+        {
+          "operationId": "cancelEditBatch",
+          "method": "POST",
+          "path": "/api/v2/edit-batches/{editBatchId}/cancel",
+          "summary": "Cancel an uncommitted edit batch"
+        }
+      ]
+    }
+  ]
+}
