@@ -4,12 +4,14 @@ import { readFileSync, mkdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { parse } from 'yaml';
+import { JSDOM } from 'jsdom';
 import { chromium } from '@playwright/test';
 import { createPreviewServer } from './serve-specification.mjs';
 import { verifyReaderAssets } from './verify-site.mjs';
 
 const output = resolve('dist/specification');
-const document = verifyReaderAssets(output);
+verifyReaderAssets(output);
+const document = new JSDOM(readFileSync(resolve(output, 'index.html'), 'utf8')).window.document;
 const api = parse(readFileSync('openapi/vindhem.yaml', 'utf8'));
 assert.deepEqual(JSON.parse(readFileSync(resolve(output, 'openapi/vindhem.json'), 'utf8')), api);
 const publication = JSON.parse(readFileSync(resolve(output, 'publication.json'), 'utf8'));

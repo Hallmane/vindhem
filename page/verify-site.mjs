@@ -3,7 +3,6 @@ import { createHash } from 'node:crypto';
 import { lstatSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { JSDOM } from 'jsdom';
 
 export const SITE_FILES = [
     'index.html', 'reader.css', 'reader.js', 'publication.json',
@@ -14,17 +13,19 @@ export const SITE_FILES = [
 ];
 
 export function verifyReaderAssets(directory) {
-    const document = new JSDOM(readFileSync(resolve(directory, 'index.html'), 'utf8')).window.document;
-    for (const [name, selector, attribute] of [
-        ['reader.css', 'link[rel="stylesheet"]', 'href'],
-        ['reader.js', 'script', 'src'],
+    const html = readFileSync(resolve(directory, 'index.html'), 'utf8');
+    // Check only our canonical generated tags; this is not a general HTML sanitizer.
+    for (const [name, pattern, tagFor] of [
+        ['reader.css', /<link\b[^>]*>/gi, (url) => `<link rel="stylesheet" href="${url}">`],
+        ['reader.js', /<script\b[^>]*>/gi, (url) => `<script src="${url}" defer>`],
     ]) {
-        const elements = document.querySelectorAll(selector);
-        assert.equal(elements.length, 1, `Expected one local ${name} reference`);
+        const tags = html.match(pattern) ?? [];
+        assert.equal(tags.length, 1, `Expected one local ${name} reference`);
         const hash = createHash('sha256').update(readFileSync(resolve(directory, name))).digest('hex');
-        assert.equal(elements[0].getAttribute(attribute), `${name}?v=${hash}`, `Expected exact content-addressed ${name} URL`);
+        const expected = tagFor(`${name}?v=${hash}`);
+        assert.equal(tags[0], expected, `Expected exact content-addressed ${name} URL`);
+        if (name === 'reader.js') assert(html.includes(`${expected}</script>`), 'Expected an empty external reader script');
     }
-    return document;
 }
 
 export function verifySite(directory) {
