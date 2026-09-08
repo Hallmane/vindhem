@@ -129,14 +129,23 @@ export function renderSpecificationReader({ root, output, contract, portable, re
         return entries.length ? `<div class="constraints">${entries.join('')}</div>` : '';
     }
 
+    function fieldRow(name, detail, type, description) {
+        return `<tr role="row"><td role="cell" class="field-name"><code>${escape(name)}</code><small>${escape(detail)}</small></td><td role="cell" class="field-type"><span class="mobile-field-label" aria-hidden="true">Type: </span>${type}</td><td role="cell" class="field-description">${description}</td></tr>`;
+    }
+
+    function fieldTable(name, rows, extraClass = '') {
+        // Explicit roles retain table relationships when narrow-screen CSS stacks cells.
+        return `<table class="fields${extraClass}" role="table"><thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">${name}</th><th role="columnheader" scope="col">Type</th><th role="columnheader" scope="col">Definition</th></tr></thead><tbody role="rowgroup">${rows}</tbody></table>`;
+    }
+
     function schemaBody(schema, portableContext = false) {
         const resolution = resolveSchema(schema, portableContext);
         const resolved = resolution.schema;
         portableContext = resolution.portableContext;
         if (typeof resolved !== 'object' || resolved === null) return schemaType(resolved, portableContext);
         const properties = Object.entries(resolved.properties ?? {});
-        const rows = properties.map(([name, definition]) => `<tr><td><code>${escape(name)}</code>${resolved.required?.includes(name) ? '<small>required</small>' : '<small>optional</small>'}</td><td>${schemaType(definition, portableContext)}</td><td>${markdown(definition.description ?? '')}${constraints(definition)}</td></tr>`).join('');
-        return `${markdown(resolved.description ?? '')}${constraints(resolved)}${properties.length ? `<table class="fields"><thead><tr><th>Field</th><th>Type</th><th>Definition</th></tr></thead><tbody>${rows}</tbody></table>` : `<p class="schema-type">${schemaType(resolved, portableContext)}</p>`}
+        const rows = properties.map(([name, definition]) => fieldRow(name, resolved.required?.includes(name) ? 'required' : 'optional', schemaType(definition, portableContext), `${markdown(definition.description ?? '')}${constraints(definition)}`)).join('');
+        return `${markdown(resolved.description ?? '')}${constraints(resolved)}${properties.length ? fieldTable('Field', rows) : `<p class="schema-type">${schemaType(resolved, portableContext)}</p>`}
             ${properties.length && (resolved.oneOf || resolved.anyOf || resolved.allOf) ? `<div class="composition">${schemaType(resolved, portableContext)}</div>` : ''}
             ${resolved.not ? `<div class="constraint-rule"><em>Must not match</em><pre>${json(resolved.not)}</pre></div>` : ''}
             ${resolved.discriminator ? `<p class="constraint-rule">Discriminator: <code>${escape(resolved.discriminator.propertyName)}</code></p>` : ''}`;
@@ -146,7 +155,7 @@ export function renderSpecificationReader({ root, output, contract, portable, re
 
     function parameters(items) {
         if (!items.length) return '';
-        return `<table class="fields parameters"><thead><tr><th>Name</th><th>Type</th><th>Definition</th></tr></thead><tbody>${items.map((p) => `<tr><td><code>${escape(p.name)}</code><small>${escape(p.in)}${p.in === 'response header' ? '' : p.required ? ' (required)' : ' (optional)'}</small></td><td>${schemaType(p.schema)}</td><td>${markdown(p.description ?? '')}${constraints(p.schema)}${p.deprecated ? '<span>Deprecated</span>' : ''}</td></tr>`).join('')}</tbody></table>`;
+        return fieldTable('Name', items.map((p) => fieldRow(p.name, `${p.in}${p.in === 'response header' ? '' : p.required ? ' (required)' : ' (optional)'}`, schemaType(p.schema), `${markdown(p.description ?? '')}${constraints(p.schema)}${p.deprecated ? '<span>Deprecated</span>' : ''}`)).join(''), ' parameters');
     }
 
     function response(status, original) {
@@ -229,7 +238,7 @@ export function renderSpecificationReader({ root, output, contract, portable, re
     const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="The Vindhem music-library specification: complete API reference, schemas, system rules and portable library format."><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; connect-src 'none'"><title>Vindhem Specification</title><link rel="stylesheet" href="${assets[0].url}"><script src="${assets[1].url}" defer></script></head>
 <body><a class="skip-link" href="#rules">Skip to specification</a><div class="book">
-<header class="masthead" id="top"><div class="running-head"><a class="repository-link" href="https://github.com/Hallmane/vindhem">GitHub repository ↗</a><span>Specification / ${escape(contract.info.version)}${contract.info.version.startsWith('0.') ? ' · Development release' : ''}</span></div><div class="title-spread"><h1>Vindhem</h1><div class="edition">OpenAPI ${escape(contract.openapi)} · JSON Schema</div></div>
+<header class="masthead" id="top"><div class="running-head"><a class="repository-link" href="https://github.com/Hallmane/vindhem">GitHub repository <span class="external-arrow" aria-hidden="true"></span></a><span>Specification / ${escape(contract.info.version)}${contract.info.version.startsWith('0.') ? ' · Development release' : ''}</span></div><div class="title-spread"><h1>Vindhem</h1><div class="edition">OpenAPI ${escape(contract.openapi)} · JSON Schema</div></div>
 <div class="download-line"><a href="openapi/vindhem.yaml" download>OpenAPI YAML ↓</a><a href="openapi/vindhem.json" download>JSON ↓</a><a href="schema/library-v1.schema.json" download>Portable schema ↓</a></div></header>
 <div class="document-layout"><nav class="contents" aria-label="Contents"><a class="contents-title" href="#top">Contents</a><details open><summary><a href="#rules">I. The specification</a></summary>${sectionNav('rule')}</details><details open><summary><a href="#api">II. API reference</a></summary>${groups.map((g) => `<a href="#group-${slug(g.name)}">${escape(g.name)}</a>`).join('')}</details><details><summary><a href="#types">III. Definitions</a></summary>${schemas.map(([name]) => `<a href="#schema-${escape(name)}">${escape(name)}</a>`).join('')}</details><details><summary><a href="#portable">IV. Portable Library</a></summary>${sectionNav('format')}<a href="#portable-schema">JSON Schema</a></details><a class="back-top" href="#top">Back to beginning ↑</a></nav>
 <main><section class="chapter" id="rules" data-section><div class="chapter-label">I / The specification</div><h2>Vindhem Specification</h2><div class="prose rules">${rules}</div></section>

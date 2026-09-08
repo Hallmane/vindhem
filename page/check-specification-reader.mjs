@@ -25,6 +25,16 @@ for (const file of publication.files) {
 }
 assert.equal(document.querySelectorAll('a[href="LICENSE"]').length, 1, 'Keep one licence link');
 assert.equal(document.querySelectorAll('.masthead .repository-link[href="https://github.com/Hallmane/vindhem"]').length, 1, 'Keep one top repository link');
+assert.equal(document.querySelector('.repository-link .external-arrow[aria-hidden="true"]').textContent, '', 'Decorative link arrows do not use emoji-capable glyphs');
+for (const table of document.querySelectorAll('.fields')) {
+    assert.equal(table.getAttribute('role'), 'table');
+    assert.equal(table.querySelectorAll('thead th[scope="col"][role="columnheader"]').length, 3);
+    for (const row of table.querySelectorAll('tbody tr')) {
+        assert.equal(row.getAttribute('role'), 'row');
+        assert.equal(row.querySelectorAll(':scope > td[role="cell"]').length, 3);
+        assert.equal(row.querySelector('.mobile-field-label').getAttribute('aria-hidden'), 'true');
+    }
+}
 assert.equal(publication.license, 'LICENSE');
 const operations = Object.values(api.paths).flatMap((item) => Object.values(item).filter((value) => value?.operationId).map((op) => op.operationId));
 assert.deepEqual([...document.querySelectorAll('[data-operation]')].map((e) => e.dataset.operation).sort(), operations.sort());
@@ -139,6 +149,13 @@ try {
         }
     }
     await page.goto(`${base}/`);
+    assert.equal(await page.locator('.contents details[open]').count(), 0, 'Phone contents start collapsed');
+    await page.goto(`${base}/#schema-Track`);
+    assert(await page.locator('#schema-Track .fields tbody tr').first().evaluate((row) => {
+        const cells = [...row.children].map((cell) => cell.getBoundingClientRect());
+        return cells.every((cell) => Math.abs(cell.width - row.getBoundingClientRect().width) < 1)
+            && cells[1].top >= cells[0].bottom;
+    }), 'Phone fields use the full row width rather than three narrow columns');
     await page.screenshot({ path: resolve(screenshots, 'mobile.png') });
     assert.deepEqual(errors, []);
     const yaml = await page.request.get(`${base}/openapi/vindhem.yaml`);
