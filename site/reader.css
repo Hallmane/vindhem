@@ -11,4 +11,39 @@ details{margin:18px 0;padding-top:12px;border-top:1px solid var(--rule)}summary{
 @media(max-width:1150px){.book{padding:26px 32px}.document-layout{grid-template-columns:156px minmax(0,1fr);gap:32px}.title-spread{gap:35px;grid-template-columns:1fr 210px}.title-spread h1{font-size:96px}.operation-spread{grid-template-columns:1fr}.examples{max-width:650px}.type-index>div{columns:2}}
 @media(max-width:760px){.book{padding:23px}.title-spread{grid-template-columns:1fr;padding-top:35px;gap:23px}.document-layout{display:block;margin-top:25px}.contents{position:static;max-height:none;display:flex;gap:12px 23px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding:0 0 18px;margin-bottom:30px}.contents-title,.contents .back-top{display:none}.contents details{margin:0;min-width:0;max-width:100%}.contents summary{margin:0;font-size:15px}.chapter>h2{font-size:39px}.chapter-intro{font-size:21px}.chapter+.chapter{margin-top:72px;padding-top:32px}.api-group{margin-top:64px}.operation,.schema{margin-top:40px;padding-top:28px}.operation-spread{gap:32px}.prose h3{font-size:26px}.operation-heading h4{font-size:28px}.schema .fields{font-size:15px}.schema .fields td a{font-size:15px}.group-heading h3{font-size:37px}.download-line{justify-content:flex-start;gap:10px 21px}.schema .fields{table-layout:fixed}.schema>h3{font-size:27px}}
 @media(max-width:430px){:root{font-size:17px}.book{padding:20px 18px 40px}.title-spread h1{font-size:76px;letter-spacing:-4px}.running-head{font-size:12px}.group-index{grid-template-columns:1fr}.chapter>h2{font-size:35px}.fields{font-size:15px}.fields th:first-child{width:29%}.fields th:nth-child(2){width:31%}.fields td{padding-right:8px}.type-index>div{columns:1}.endpoint-address{gap:12px}.endpoint code{font-size:12px}.prose pre{padding-left:11px;font-size:12px}.prose table{display:block;overflow-x:auto;max-width:100%}}
+/* Keep iOS text autosizing from inflating individual columns; zoom stays enabled. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.document-layout>main,.operation-spread>*{min-width:0}
+.operation-meta,.response-type,.example-title{flex-wrap:wrap}
+.operation-heading h4{overflow-wrap:anywhere}
+.composition,.schema-type,.type-alternatives{overflow-wrap:anywhere}
+.mobile-field-label{display:none}
+/* Decorative geometry cannot be substituted with a platform emoji font. */
+.external-arrow{display:inline-block;position:relative;width:.7em;height:.7em;vertical-align:.08em}
+.external-arrow::before{content:"";position:absolute;inset:0 0 auto auto;width:.6em;height:.6em;border-top:1px solid currentColor;border-right:1px solid currentColor}
+.external-arrow::after{content:"";position:absolute;top:0;right:0;width:.85em;border-top:1px solid currentColor;transform:rotate(-45deg);transform-origin:right center}
+@media(max-width:760px){
+    .contents{display:block}
+    .contents details{margin:0 0 12px}
+    .contents summary{display:list-item;padding:8px 0;min-height:44px}
+    .contents details>a{padding-top:8px;padding-bottom:8px}
+    .prose table:not(.fields){display:block;overflow-x:auto;max-width:100%}
+}
+@media(max-width:600px){
+    .fields,.schema .fields{display:block;font-size:1rem;table-layout:auto}
+    .fields thead{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%)}
+    .fields tbody,.fields tr,.fields td{display:block;width:100%}
+    .fields tbody tr{border-top:1px solid var(--fine);padding:18px 0}
+    .fields tbody tr:last-child{border-bottom:1px solid var(--fine)}
+    .fields td{border:0;padding:0 0 10px}
+    .fields td:last-child{padding-bottom:0}
+    .fields td.field-name{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 12px}
+    .fields td.field-name>code{font-size:1rem}
+    .fields td.field-name>small{margin:0}
+    .fields td.field-description:empty{padding:0}
+    .fields .field-type{color:var(--quiet)}
+    .fields td a,.schema .fields td a{font-size:inherit}
+    .fields .constraints{font-size:.85rem}
+    .mobile-field-label{display:inline}
+}
 @media print{.contents,.download-line,.skip-link{display:none}.document-layout{display:block}.book{padding:0}.operation,.schema{break-inside:avoid}body{background:white;color:black}:root{--ink:#000;--quiet:#444;--rule:#888;--fine:#bbb}.examples pre,pre,.endpoint code,.constraints{color:#222}}

@@ -1,5 +1,9 @@
 const contents = document.querySelector('.contents');
 const main = document.querySelector('main');
+// Start compact on phones; subsequent user choices survive orientation changes.
+if (matchMedia('(max-width: 760px)').matches) {
+    for (const section of contents.querySelectorAll('details')) section.open = false;
+}
 const entries = [...contents.querySelectorAll('a[href^="#"]')]
     .map((link) => ({ link, target: document.getElementById(link.hash.slice(1)) }))
     .filter(({ target }) => target && main.contains(target));
